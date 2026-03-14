@@ -1,0 +1,23 @@
+# 生成迁移文件
+python manage.py makemigrations
+# 执行迁移
+python manage.py migrate
+# 启动项目
+python manage.py runserver
+
+# 路由使用说明
+# 全接口统一前缀：http://127.0.0.1:8000/api/xxx/
+# 权限规则：登录接口（注册 / 登录）无需 Token，其余接口都需要在请求头携带：
+Authorization: Bearer 你的Token
+
+# 下载的库
+pip install Django==4.2.0
+pip install djangorestframework
+pip install djangorestframework-simplejwt
+pip install Pillow
+pip install mysqlclient
+pip install django-redis redis
+pip install django-cors-headers
+
+#创建超级用户
+python manage.py createsuperuser

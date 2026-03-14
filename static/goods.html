@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="common.js"></script>
+    <style>.sidebar{position:fixed; width:240px; height:100vh; background:#222; color:white; padding:20px;} .main{margin-left:240px; padding:30px;}</style>
+</head>
+<body onload="checkLogin();getCategory();getGoods()">
+    <div class="sidebar">
+        <h4>管理后台</h4>
+        <a href="index.html" class="btn btn-outline-light w-100 mb-2">首页</a>
+        <a href="goods.html" class="btn btn-light w-100 mb-2">商品管理</a>
+        <a href="order.html" class="btn btn-outline-light w-100 mb-2">订单支付</a>
+    </div>
+    <div class="main">
+        <h3>商品分类</h3>
+        <input id="cateName" placeholder="分类名称" class="form-control w-50 d-inline mb-2">
+        <button class="btn btn-success" onclick="addCategory()">添加分类</button>
+        <div id="cateList" class="mt-3 mb-5"></div>
+
+        <h3>商品管理</h3>
+        <input id="goodsName" placeholder="商品名" class="form-control mb-2">
+        <input id="price" placeholder="价格" class="form-control mb-2">
+        <input id="stock" placeholder="库存" class="form-control mb-2">
+        <input type="file" id="image" class="form-control mb-2">
+        <button class="btn btn-primary" onclick="addGoods()">添加商品</button>
+        <div id="goodsList" class="mt-3"></div>
+    </div>
+
+<script>
+async function getCategory(){
+    const data = await request('/goods/category/');
+    let html=''; data.forEach(i=>html+=`<div class="badge bg-primary me-2">${i.name} <span onclick="delCate(${i.id})" style="cursor:pointer">×</span></div>`);
+    document.getElementById('cateList').innerHTML=html;
+}
+async function addCategory(){
+    await request('/goods/category/','POST',{name:document.getElementById('cateName').value});
+    getCategory();
+}
+async function delCate(id){await request(`/goods/category/${id}/`,'DELETE'); getCategory();}
+
+async function getGoods(){
+    const data = await request('/goods/');
+    let html='';
+    data.data.forEach(item=>{
+        html+=`<div class="card p-3 mb-2 d-flex flex-row gap-3">
+            <img src="${BASE_URL.replace('/api','')}${item.image}" width="80" height="80" style="object-fit:cover">
+            <div>
+                <h5>${item.name}</h5>
+                <p>价格：${item.price} 库存：${item.stock}</p>
+                <button class="btn btn-danger btn-sm" onclick="delGoods(${item.id})">删除</button>
+            </div>
+        </div>`;
+    });
+    document.getElementById('goodsList').innerHTML=html;
+}
+async function addGoods(){
+    const fd = new FormData();
+    fd.append('name',document.getElementById('goodsName').value);
+    fd.append('price',document.getElementById('price').value);
+    fd.append('stock',document.getElementById('stock').value);
+    fd.append('image',document.getElementById('image').files[0]);
+    await uploadRequest('/goods/',fd);
+    getGoods();
+}
+async function delGoods(id){await request(`/goods/${id}/`,'DELETE'); getGoods();}
+</script>
+</body>
+</html>

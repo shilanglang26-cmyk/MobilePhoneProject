@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 手机配件销售系统</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="common.js"></script>
+    <style>
+        body{background: #f5f7fa; display: grid; place-items: center; height: 100vh; margin:0;}
+        .login-box{width: 420px; background: white; padding:30px; border-radius:12px; box-shadow:0 4px 20px #00000010;}
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <h3 class="text-center mb-4 text-primary">📱 手机配件销售系统</h3>
+    <div class="mb-3">
+        <label>用户名</label>
+        <input id="username" class="form-control" placeholder="请输入用户名">
+    </div>
+    <div class="mb-3">
+        <label>密码</label>
+        <input type="password" id="password" class="form-control" placeholder="请输入密码">
+    </div>
+    <button class="btn btn-primary w-100" onclick="login()">登录</button>
+    <div class="text-center mt-3">
+        <a href="register.html" class="text-decoration-none">没有账号？立即注册</a>
+    </div>
+</div>
+
+    <script src="common.js"></script>
+<script>
+async function login(){
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch(BASE_URL+'/users/login/',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(data.access){
+        localStorage.setItem('token',data.access);
+        alert('登录成功');
+        window.location.href='index.html';
+    }else{
+        alert('登录失败：账号或密码错误');
+    }
+}
+</script>
+</body>
+</html>
